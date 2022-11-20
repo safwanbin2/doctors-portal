@@ -1,10 +1,11 @@
 import React, { useContext } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../AuthProvider/AuthProvider';
 
 const Signup = () => {
     const { createUser, logInWithGoogle, update } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const { register, handleSubmit, formState: { errors } } = useForm();
     const handleFormSubmit = data => {
@@ -22,7 +23,9 @@ const Signup = () => {
 
         const updateUser = name => {
             update(name)
-                .then(() => { })
+                .then(() => {
+                    saveUser(data.name, data.email);
+                })
                 .catch(err => console.error(err))
         }
     }
@@ -32,8 +35,37 @@ const Signup = () => {
             .then(result => {
                 const user = result.user;
                 console.log(user)
+                if (user && user.uid) {
+                    saveUser(user.displayName, user.email);
+                }
             })
             .catch(err => console.error(err))
+    }
+
+    const saveUser = (name, email) => {
+        const userData = { name, email }
+        fetch('http://localhost:5000/users', {
+            method: "POST",
+            headers: {
+                "content-type": "application/json"
+            },
+            body: JSON.stringify(userData)
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data)
+                getJwtToken(email);
+            })
+    }
+
+    const getJwtToken = email => {
+        fetch(`http://localhost:5000/jwt?email=${email}`)
+            .then(res => res.json())
+            .then(data => {
+                console.log(data)
+                localStorage.setItem('doctorsportal-token', data.token)
+                navigate('/')
+            })
     }
 
     return (
@@ -76,7 +108,7 @@ const Signup = () => {
                     {/* submiting */}
                     <input type="submit" value="Login" className='btn btn-neutral w-full mt-6' />
                 </form>
-                <p className='text-sm text-center my-4'>Already have an account? <Link to='/login' className='text-semibold text-secondary'>Login</Link></p>
+                <p className='text-sm text-center my-4'>Already have an account? <Link to='/login' className='text-semibold text-secondary'>Sign Up</Link></p>
 
                 <div className="divider">OR</div>
 

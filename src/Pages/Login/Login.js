@@ -1,10 +1,13 @@
 import React, { useContext } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../AuthProvider/AuthProvider';
 
 const Login = () => {
     const { logIn, logInWithGoogle } = useContext(AuthContext);
+    const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || '/';
     const { register, handleSubmit, formState: { errors } } = useForm();
     const handleFormSubmit = (data) => {
         const email = data.email;
@@ -14,6 +17,9 @@ const Login = () => {
             .then(result => {
                 const user = result.user;
                 console.log(user)
+                // saveUser(user.name, user.email);
+                getJwtToken(email);
+                navigate(from, { replace: true })
             })
             .catch(err => console.error(err))
     }
@@ -23,9 +29,37 @@ const Login = () => {
             .then(result => {
                 const user = result.user;
                 console.log(user)
+                navigate(from, { replace: true })
             })
             .catch(err => console.error(err))
     }
+
+    // const saveUser = (name, email) => {
+    //     const userData = { name, email }
+    //     fetch('http://localhost:5000/users', {
+    //         method: "POST",
+    //         headers: {
+    //             "content-type": "application/json"
+    //         },
+    //         body: JSON.stringify(userData)
+    //     })
+    //         .then(res => res.json())
+    //         .then(data => {
+    //             console.log(data)
+    //             getJwtToken(email);
+    //         })
+    // }
+
+    const getJwtToken = email => {
+        fetch(`http://localhost:5000/jwt?email=${email}`)
+            .then(res => res.json())
+            .then(data => {
+                console.log(data)
+                localStorage.setItem('doctorsportal-token', data.token)
+                navigate('/')
+            })
+    }
+
 
     return (
         <div className='flex justify-center items-center flex-col min-h-screen'>

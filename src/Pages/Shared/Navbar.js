@@ -13,10 +13,9 @@ const Navbar = () => {
     }
     const navItems = <>
         <li><Link to='/'>Home</Link></li>
-        <li><Link to='/'>About</Link></li>
         <li><Link to='/appointment'>Appointment</Link></li>
-        <li><Link to='/'>Reviews</Link></li>
-        <li><Link to='/'>Contact Us</Link></li>
+        <li><Link to='/'>About</Link></li>
+        <li><Link to='/dashboard'>Dashboard</Link></li>
         {
             user ? <li><button onClick={handleLogOut}>Logout</button></li>
                 : <li><Link to='/login'>Login</Link></li>
@@ -41,6 +40,9 @@ const Navbar = () => {
                     {navItems}
                 </ul>
             </div>
+            <label tabIndex={0} className="">
+                <label htmlFor="my-drawer-2" className="btn btn-primary drawer-button lg:hidden">Open drawer</label>
+            </label>
         </div>
     );
 };
