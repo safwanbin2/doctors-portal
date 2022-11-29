@@ -4,7 +4,7 @@ import { AuthContext } from '../../AuthProvider/AuthProvider';
 
 const BookingModal = ({ treatment, date, setTreatment, refetch }) => {
     const { user } = useContext(AuthContext);
-    const { name, slots } = treatment;
+    const { name, slots, price } = treatment;
 
     const handleSubmit = event => {
         event.preventDefault();
@@ -20,10 +20,11 @@ const BookingModal = ({ treatment, date, setTreatment, refetch }) => {
             patient: name,
             email,
             phone,
-            treatmentName: treatment.name
+            treatmentName: treatment.name,
+            price
         }
 
-        fetch('http://localhost:5000/bookings', {
+        fetch('https://doctors-portal-server-indol.vercel.app/bookings', {
             method: "POST",
             headers: {
                 "content-type": "application/json"

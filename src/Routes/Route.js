@@ -11,10 +11,13 @@ import AllUsers from "../Pages/Dashboard/AllUsers";
 import AdminRoute from '../Routes/AdminRoute';
 import AddDoctors from "../Pages/Dashboard/AddDoctors";
 import ManageDoctors from "../Pages/Dashboard/ManageDoctors";
+import Payment from "../Pages/Dashboard/Payment";
+import ErrorPage from "../Pages/Shared/ErrorPage";
 
 const router = createBrowserRouter([
     {
         path: '/',
+        errorElement: <ErrorPage></ErrorPage>,
         element: <Main></Main>,
         children: [
             {
@@ -37,6 +40,7 @@ const router = createBrowserRouter([
     },
     {
         path: "/dashboard",
+        errorElement: <ErrorPage></ErrorPage>,
         element: <PrivateRoute><DashboardLayout></DashboardLayout></PrivateRoute>,
         children: [
             {
@@ -54,6 +58,11 @@ const router = createBrowserRouter([
             {
                 path: "/dashboard/managedoctors",
                 element: <AdminRoute><ManageDoctors></ManageDoctors></AdminRoute>
+            },
+            {
+                path: '/dashboard/bookings/:id',
+                loader: ({ params }) => fetch(`https://doctors-portal-server-indol.vercel.app/bookings/${params.id}`),
+                element: <Payment></Payment>
             }
         ]
     }

@@ -1,16 +1,31 @@
 import { useQuery } from '@tanstack/react-query';
-import React from 'react';
+import React, { useState } from 'react';
+import ConfirmModal from './ConfirmModal';
 
 const ManageDoctors = () => {
-    const { data: doctors = [] } = useQuery({
-        queryKey: ["doctors"],
+    const { data: doctors = [], refetch } = useQuery({
+        queryKey: ["doctors",],
         queryFn: async () => {
-            const res = await fetch(`http://localhost:5000/doctors`,)
+            const res = await fetch(`https://doctors-portal-server-indol.vercel.app/doctors`,)
             const data = await res.json()
             return data
         }
     })
-    console.log(doctors)
+
+    const [deleteDoctor, setDeleteDoctor] = useState(null);
+    const handleDeleteDoctor = id => {
+        fetch(`https://doctors-portal-server-indol.vercel.app/doctors/${id}`, {
+            method: 'DELETE'
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data)
+                setDeleteDoctor(null)
+                refetch();
+            })
+            .catch(err => console.log(err))
+    }
+
     return (
         <div>
             <h2>Manage Doctors: </h2>
@@ -38,7 +53,8 @@ const ManageDoctors = () => {
                                 <td>{doctor.name}</td>
                                 <td>{doctor.email}</td>
                                 <td>{doctor.specialty}</td>
-                                <td><button className='btn btn-sm btn-error'>Delete</button></td>
+                                {/* <td><button className='btn btn-sm btn-error'>Delete</button></td> */}
+                                <td><label onClick={() => setDeleteDoctor(doctor)} htmlFor="confirmModal" className="btn btn-sm btn-error">Delete</label></td>
                             </tr>)
                         }
                         {/* <tr>
@@ -50,6 +66,15 @@ const ManageDoctors = () => {
                     </tbody>
                 </table>
             </div>
+            {
+                deleteDoctor &&
+                <ConfirmModal
+                    title={'Are you sure you want to delete?'}
+                    message={"If you delete once, The action can not be undone later"}
+                    successAction={handleDeleteDoctor}
+                    deleteItem={deleteDoctor}
+                ></ConfirmModal>
+            }
         </div>
     );
 };

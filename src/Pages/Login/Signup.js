@@ -44,7 +44,7 @@ const Signup = () => {
 
     const saveUser = (name, email) => {
         const userData = { name, email }
-        fetch('http://localhost:5000/users', {
+        fetch('https://doctors-portal-server-indol.vercel.app/users', {
             method: "POST",
             headers: {
                 "content-type": "application/json"
@@ -59,7 +59,7 @@ const Signup = () => {
     }
 
     const getJwtToken = email => {
-        fetch(`http://localhost:5000/jwt?email=${email}`)
+        fetch(`https://doctors-portal-server-indol.vercel.app/jwt?email=${email}`)
             .then(res => res.json())
             .then(data => {
                 console.log(data)
